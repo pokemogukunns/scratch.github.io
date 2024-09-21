@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scratch Project Downloader</title>
+</head>
+<body>
+    <h1>Scratchプロジェクトダウンロード</h1>
+    <label for="scratch-url">ScratchプロジェクトのURLを入力してください:</label>
+    <input type="text" id="scratch-url" placeholder="例: https://scratch.mit.edu/projects/123456789/">
+    <button onclick="downloadScratchProject()">ダウンロード</button>
+
+    <script>
+        function downloadScratchProject() {
+            const scratchUrl = document.getElementById('scratch-url').value;
+            const projectId = extractProjectId(scratchUrl);
+
+            if (!projectId) {
+                alert("正しいScratchのプロジェクトURLを入力してください。");
+                return;
+            }
+
+            const downloadLink = `/download/${projectId}`;
+            window.location.href = downloadLink;
+        }
+
+        function extractProjectId(url) {
+            const regex = /\/projects\/(\d+)\//;
+            const match = url.match(regex);
+            return match ? match[1] : null;
+        }
+    </script>
+</body>
+</html>
