@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: scratch-downloader
+    env: node
+    region: Oregon
+    plan: free
+    buildCommand: "npm install"
+    startCommand: "node server.js"
