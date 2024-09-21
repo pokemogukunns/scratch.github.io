@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scratch Project Viewer & Player</title>
+</head>
+<body>
+    <h1>Scratch Project Viewer & Player</h1>
+
+    <!-- プロジェクトのURLまたはIDを入力 -->
+    <input type="text" id="projectUrl" placeholder="Enter Scratch Project URL or ID">
+    <button onclick="embedProject()">Play Project</button>
+
+    <p id="result"></p>
+
+    <!-- プロジェクト表示領域 -->
+    <iframe id="scratchViewer" width="480" height="360" frameborder="0" allowfullscreen></iframe>
+
+    <script>
+        // プロジェクトIDの取得
+        function getProjectId() {
+            const input = document.getElementById('projectUrl').value;
+            const projectIdMatch = input.match(/\d+/);
+            return projectIdMatch ? projectIdMatch[0] : null;
+        }
+
+        // 4. Turbowarpを使ってプロジェクトを表示
+        function embedProject() {
+            const projectId = getProjectId(); // プロジェクトIDを取得
+            if (!projectId) {
+                document.getElementById('result').textContent = 'Invalid URL or Project ID.';
+                return;
+            }
+
+            // TurbowarpのURLでプロジェクトを表示する
+            const viewer = document.getElementById('scratchViewer');
+            viewer.src = `https://turbowarp.org/${projectId}/embed`; // Turbowarpの埋め込みURL
+
+            document.getElementById('result').textContent = `Playing project ID: ${projectId}`;
+        }
+    </script>
+</body>
+</html>
