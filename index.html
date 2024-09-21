@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scratch Project Viewer & Downloader</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script> <!-- JSZipの読み込み -->
+</head>
+<body>
+    <h1>Scratch Project Viewer</h1>
+
+    <!-- プロジェクトのURLまたはIDを入力 -->
+    <input type="text" id="projectUrl" placeholder="Enter Scratch Project URL or ID">
+    <button onclick="downloadSB3AsZip()">Download as Zip</button>
+
+    <p id="result"></p> <!-- 結果を表示するための領域 -->
+
+    <script>
+        // プロジェクトIDの取得
+        function getProjectId() {
+            const input = document.getElementById('projectUrl').value;
+            const projectIdMatch = input.match(/\d+/);
+            return projectIdMatch ? projectIdMatch[0] : null;
+        }
+
+        // 3. Scratch APIからSB3ファイルを取得してZipに変換
+        async function downloadSB3AsZip() {
+            const projectId = getProjectId(); // プロジェクトIDを取得
+            if (!projectId) {
+                document.getElementById('result').textContent = 'Invalid URL or Project ID.';
+                return;
+            }
+
+            try {
+                // Scratch APIからプロジェクトの .sb3 ファイルを取得
+                const response = await fetch(`https://projects.scratch.mit.edu/${projectId}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to download the project.');
+                }
+
+                // Blob形式でファイルを取得
+                const sb3Blob = await response.blob();
+                
+                // JSZipを使ってファイルをZIPに変換
+                const zip = new JSZip();
+                zip.file(`${projectId}.sb3`, sb3Blob); // ZIP内に.sb3ファイルを追加
+
+                // ZIPファイルを生成
+                const zipBlob = await zip.generateAsync({ type: "blob" });
+
+                // ダウンロード用のリンクを作成して.zipファイルをダウンロード
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(zipBlob);
+                a.download = `${projectId}.zip`; // ダウンロードするファイル名
+                a.click(); // ダウンロードを自動的に開始
+
+                document.getElementById('result').textContent = `Downloaded project as zip: ${projectId}`;
+            } catch (error) {
+                document.getElementById('result').textContent = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
